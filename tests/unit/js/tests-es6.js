@@ -18,7 +18,6 @@ YUI.add('task-tests', function(Y) {
         }
     });
 
-
     suite.add(new Y.Test.Case({
         name: 'Task tests',
         'task() returns a promise': function () {
@@ -36,7 +35,7 @@ YUI.add('task-tests', function(Y) {
                 });
             });
 
-            test.wait();
+            test.wait(1000);
         },
         'catch a failure in a promise': function () {
             var test = this,
@@ -52,7 +51,7 @@ YUI.add('task-tests', function(Y) {
                 } 
             });
 
-            test.wait();
+            test.wait(1000);
         },
         'multiple sequential yields': function () {
             var test = this;
@@ -66,7 +65,7 @@ YUI.add('task-tests', function(Y) {
                 });
             });
 
-            test.wait();
+            test.wait(1000);
         },
         'returned promise resolves to the generator function returned value': function () {
             var test = this;
@@ -80,7 +79,7 @@ YUI.add('task-tests', function(Y) {
                 });
             });
 
-            test.wait();
+            test.wait(1000);
         },
         'errors thrown inside the generator function after yielding reject the returned promise': function () {
             var test = this,
@@ -95,7 +94,7 @@ YUI.add('task-tests', function(Y) {
                 });
             });
 
-            test.wait();
+            test.wait(1000);
         }
     }));
 

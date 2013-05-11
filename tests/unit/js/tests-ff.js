@@ -35,7 +35,7 @@ YUI.add('task-tests', function(Y) {
                 });
             });
 
-            test.wait();
+            test.wait(1000);
         },
         'catch a failure in a promise': function () {
             var test = this,
@@ -51,7 +51,7 @@ YUI.add('task-tests', function(Y) {
                 } 
             });
 
-            test.wait();
+            test.wait(1000);
         },
         'multiple sequential yields': function () {
             var test = this;
@@ -65,7 +65,7 @@ YUI.add('task-tests', function(Y) {
                 });
             });
 
-            test.wait();
+            test.wait(1000);
         },
         'returned promise resolves to the last yielded value': function () {
             var test = this;
@@ -79,7 +79,7 @@ YUI.add('task-tests', function(Y) {
                 });
             });
 
-            test.wait();
+            test.wait(1000);
         },
         'errors thrown inside the generator function reject the returned promise': function () {
             var test = this,
@@ -93,7 +93,22 @@ YUI.add('task-tests', function(Y) {
                 });
             });
 
-            test.wait();
+            test.wait(1000);
+        },
+        'errors thrown inside the generator function after yielding reject the returned promise': function () {
+            var test = this,
+                expected = new Error('foo');
+
+            Y.task(function () {
+                yield 1;
+                throw expected;
+            }).then(null, function (error) {
+                test.resume(function () {
+                    Assert.areSame(expected, error, 'returned promise did not reject to thrown error');
+                });
+            });
+
+            test.wait(1000);
         }
     }));
 
