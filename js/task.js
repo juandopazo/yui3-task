@@ -32,7 +32,7 @@ YUI().use('gallery-io-utils', 'gallery-task', function (Y) {
 </pre></code>
 **/
 Y.task = function (spawn) {
-    return new Task(spawn()).promise;
+    return new Task(spawn).promise;
 };
 
 /**
@@ -41,18 +41,11 @@ internally by `Y.task()`.
 
 @class task.Task
 @constructor
-@param {Generator} generator A generator returned by a generator function
+@param {Function} spawn A generator function
 **/
-function Task(generator) {
+function Task(spawn) {
     var self = this;
 
-    /**
-    The generator instance.
-
-    @property thread
-    @type {Object}
-    **/
-    this.thread = generator;
     /**
     A promise to be returned by `Y.task()`.
 
@@ -75,7 +68,18 @@ function Task(generator) {
         **/
         self.reject = reject;
     });
-    this.next();
+    /**
+    The generator instance.
+
+    @property thread
+    @type {Object}
+    **/
+    try {
+        this.thread = spawn();
+        this.next();
+    } catch (err) {
+        this.reject(err);
+    }
 }
 /**
 Step function that gets called every time the generator function yields.
@@ -102,7 +106,8 @@ is called, being replaced by _nextES6 or _nextFF depending on the platform.
 **/
 Task.prototype.next = supportsES6Syntax ? function (error, value) {
     var self = this,
-        result;
+        result,
+        resultValue;
 
     try {
         // using arguments.length to allow rejections for falsy reasons
@@ -117,19 +122,25 @@ Task.prototype.next = supportsES6Syntax ? function (error, value) {
     function accept(value) {
         self.next(null, value);
     }
+
+    resultValue = result.value;
     
     // ES6 generators return an object that in the last iteration have a
     // "done" property. When done, resolve the promise.
     if (result.done) {
-        this.resolve(result.value);
+        if (isPromise(resultValue)) {
+            resultValue.then(this.resolve, this.reject);
+        } else {
+            this.resolve(resultValue);
+        }
     // Using isPromise and not Y.when() to prevent speedbumps in Node
     // This may be revisited if there is an async behavior we want to keep
-    } else if (isPromise(result.value)) {
-        result.value.then(accept, function (err) {
+    } else if (isPromise(resultValue)) {
+        resultValue.then(accept, function (err) {
             self.next(err);
         });
     } else {
-        this.next(null, result.value);
+        this.next(null, resultValue);
     }
 } : function (error, value) {
     var self = this,
@@ -142,12 +153,17 @@ Task.prototype.next = supportsES6Syntax ? function (error, value) {
     } catch (e) {
         // Old Firefox iterators throw an exception when done
         if (e instanceof StopIteration) {
-            this.resolve(result);
+            if (isPromise(this.result)) {
+                this.result.then(this.resolve, this.reject);
+            } else {
+                this.resolve(this.result);
+            }
         } else {
             this.reject(e);
         }
         return;
     }
+    this.result = result;
 
     function accept(value) {
         self.next(null, value);
