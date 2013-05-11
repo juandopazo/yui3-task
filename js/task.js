@@ -21,20 +21,19 @@ effectively treating your promise based code as synchronous.
 @return {Promise} Promise that gets resolved or rejected based on the result of
                 the generator function
 @example
+<pre><code>
 YUI().use('gallery-io-utils', 'gallery-task', function (Y) {
-   
   Y.task(function () {
     var data = yield Y.io.getJSON('/foo.json');
     yield Y.io.postJSON('/bar', {data: data});
     Y.log('done');
   });
-
 });
-
+</pre></code>
 **/
-function task(spawn) {
-    return new task.Task(spawn()).promise;
-}
+Y.task = function (spawn) {
+    return new Task(spawn()).promise;
+};
 
 /**
 This class is not intended to be instantiated by the user, but to be used
@@ -165,6 +164,4 @@ Task.prototype.next = supportsES6Syntax ? function (error, value) {
     }
 };
 
-task.Task = Task;
-
-Y.task = task;
+Y.task.Task = Task;
