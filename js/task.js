@@ -60,7 +60,7 @@ function Task(spawn) {
         @param {Any} value Any value
         **/
         self.resolve = function (value) {
-            if (Promise.isPromise(value)) {
+            if (Y.Promise.isPromise(value)) {
                 value.then(fulfill, reject);
             } else {
                 fulfill(value);
@@ -74,6 +74,12 @@ function Task(spawn) {
         **/
         self.reject = reject;
     });
+    this.accept = function (value) {
+        self.next(null, value);
+    };
+    this.fail = function (error) {
+        self.next(error);
+    };
     /**
     The generator instance.
 
@@ -110,68 +116,58 @@ is called, being replaced by _nextES6 or _nextFF depending on the platform.
 @param {Any} [error] An optional error to pass to the generator function
 @param {Any} [value] A value to pass to the generator function
 **/
-Y.mix(Task.prototype, {
-    accept: function (value) {
-        this.next(null, value);
-    },
-    fail: function (error) {
-        this.next(error);
-    },
-    next: supportsES6Syntax ? function (error, value) {
-        var self = this,
-            result,
-            resultValue;
+Task.prototype.next = supportsES6Syntax ? function (error, value) {
+    var result,
+        resultValue;
 
-        try {
-            // using arguments.length to allow rejections for falsy reasons
-            result = arguments.length === 1 ? this.thread.throw(error) :
-                    this.thread.send(value);
-        } catch (e) {
-            // error thrown inside the generator function are turned into
-            // rejections for the promise that Y.task() returns
-            return this.reject(e);
-        }
-
-        resultValue = result.value;
-        
-        // ES6 generators return an object that in the last iteration have a
-        // "done" property. When done, resolve the promise.
-        if (result.done) {
-            this.resolve(resultValue);
-        // Using isPromise and not Y.when() to prevent speedbumps in Node
-        // This may be revisited if there is an async behavior we want to keep
-        } else if (isPromise(resultValue)) {
-            resultValue.then(this.accept, this.fail);
-        } else {
-            this.accept(resultValue);
-        }
-    } : function (error, value) {
-        var self = this,
-            result;
-
-        try {
-            // using arguments.length to allow rejections for falsy reasons
-            result = arguments.length === 1 ? this.thread.throw(error) :
-                    this.thread.send(value);
-        } catch (e) {
-            // Old Firefox iterators throw an exception when done
-            if (e instanceof StopIteration) {
-                this.resolve(this.result);
-            } else {
-                this.reject(e);
-            }
-            return;
-        }
-        this.result = result;
-
-        // Using isPromise and not Y.when() to prevent speedbumps in Node
-        // This may be revisited if there is an async behavior we want to keep
-        if (isPromise(result)) {
-            result.then(this.accept, this.fail);
-        } else {
-            this.accept(result);
-        }
+    try {
+        // using arguments.length to allow rejections for falsy reasons
+        result = arguments.length === 1 ? this.thread.throw(error) :
+                this.thread.send(value);
+    } catch (e) {
+        // error thrown inside the generator function are turned into
+        // rejections for the promise that Y.task() returns
+        return this.reject(e);
     }
-});
+
+    resultValue = result.value;
+    
+    // ES6 generators return an object that in the last iteration have a
+    // "done" property. When done, resolve the promise.
+    if (result.done) {
+        this.resolve(resultValue);
+    // Using isPromise and not Y.when() to prevent speedbumps in Node
+    // This may be revisited if there is an async behavior we want to keep
+    } else if (isPromise(resultValue)) {
+        resultValue.then(this.accept, this.fail);
+    } else {
+        this.accept(resultValue);
+    }
+} : function (error, value) {
+    var result;
+
+    try {
+        // using arguments.length to allow rejections for falsy reasons
+        result = arguments.length === 1 ? this.thread.throw(error) :
+                this.thread.send(value);
+    } catch (e) {
+        // Old Firefox iterators throw an exception when done
+        if (e instanceof StopIteration) {
+            this.resolve(this.result);
+        } else {
+            this.reject(e);
+        }
+        return;
+    }
+    this.result = result;
+
+    // Using isPromise and not Y.when() to prevent speedbumps in Node
+    // This may be revisited if there is an async behavior we want to keep
+    if (isPromise(result)) {
+        result.then(this.accept, this.fail);
+    } else {
+        this.accept(result);
+    }
+};
 
 Y.task.Task = Task;
