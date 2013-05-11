@@ -87,7 +87,7 @@ function Task(spawn) {
     @type {Object}
     **/
     try {
-        this.thread = spawn();
+        this.thread = spawn.call(this);
         this.next();
     } catch (err) {
         this.reject(err);
