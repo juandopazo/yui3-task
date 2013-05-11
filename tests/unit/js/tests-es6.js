@@ -81,6 +81,20 @@ YUI.add('task-tests', function(Y) {
 
             test.wait(1000);
         },
+        'errors thrown inside the generator function reject the returned promise': function () {
+            var test = this,
+                expected = new Error('foo');
+
+            Y.task(function* () {
+                throw expected;
+            }).then(null, function (error) {
+                test.resume(function () {
+                    Assert.areSame(expected, error, 'returned promise did not reject to thrown error');
+                });
+            });
+
+            test.wait(1000);
+        },
         'errors thrown inside the generator function after yielding reject the returned promise': function () {
             var test = this,
                 expected = new Error('foo');
