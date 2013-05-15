@@ -1,6 +1,8 @@
 YUI 3 Task
 ==========
 
+![Travis Build Status](https://api.travis-ci.org/juandopazo/yui3-task.png)
+
 This module includes a utility for simplifying the use of promises by making
 them behave as synchronous code. It's targeted for Spider Monkey and the latest
 versions of V8 (Chrome 29 and upwards) with the `--harmony` flag enabled.
