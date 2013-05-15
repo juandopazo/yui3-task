@@ -10,7 +10,7 @@ to the `Y.task` utility:
 
 ```JavaScript
 YUI({
-    gallery: '{latestgallery}'
+    gallery: 'gallery-2013.05.15-21-12'
 }).use('json-parse', 'gallery-io-utils', 'gallery-task', function (Y) {
     
     // The function* is the syntax for EcmaScript 6 generators
