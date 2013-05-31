@@ -60,7 +60,7 @@ function Task(spawn) {
         @param {Any} value Any value
         **/
         self.resolve = function (value) {
-            if (Y.Promise.isPromise(value)) {
+            if (isPromise(value)) {
                 value.then(fulfill, reject);
             } else {
                 fulfill(value);
