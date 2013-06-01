@@ -21,11 +21,11 @@
 
 <script>
 YUI({
-    coverage: ['task'],
+    coverage: ['gallery-task'],
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
     modules: {
         'gallery-task': {
-            fullpath: '/build/gallery-task/gallery-task.js',
+            fullpath: '/build/gallery-task/gallery-task-min.js',
             requires: [
                 'promise'
             ]
