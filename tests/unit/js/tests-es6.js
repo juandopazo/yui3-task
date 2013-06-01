@@ -1,7 +1,7 @@
 YUI.add('task-tests', function(Y) {
 
     var Assert = Y.Test.Assert,
-        Promise = Y.Promise
+        Promise = Y.Promise;
 
     var suite = new Y.Test.Suite('task');
 
