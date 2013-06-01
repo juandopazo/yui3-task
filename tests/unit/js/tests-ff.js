@@ -67,7 +67,7 @@ YUI.add('task-tests', function(Y) {
 
             test.wait(1000);
         },
-        'returned promise resolves to the last yielded value': function () {
+        'returned promise resolution': function () {
             var test = this;
 
             Y.task(function () {
@@ -75,7 +75,7 @@ YUI.add('task-tests', function(Y) {
                 yield Promise.resolve(one + 2);
             }).then(function (result) {
                 test.resume(function () {
-                    Assert.areEqual(3, result, 'promise did not resolve to the last yielded value');
+                    Assert.isUndefined(result, 'promise did not resolve to undefined');
                 });
             });
 
