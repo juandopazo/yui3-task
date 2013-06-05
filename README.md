@@ -28,4 +28,4 @@ YUI({
 Credits
 -------
 
-Y.task is a simplified port of [Task.js](http://taskjs.org/), by David Herman
+Y.task is heavily based on [Task.js](http://taskjs.org/), by David Herman
