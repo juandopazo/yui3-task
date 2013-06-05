@@ -23,3 +23,8 @@ YUI({
     });
 
 });
+
+Credits
+-------
+
+Y.task is a simplified port of [Task.js](http://taskjs.org/), by David Herman
