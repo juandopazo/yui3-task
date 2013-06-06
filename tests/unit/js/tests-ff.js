@@ -35,7 +35,7 @@ YUI.add('task-tests', function(Y) {
                 });
             });
 
-            test.wait(1000);
+            test.wait();
         },
         'catch a failure in a promise': function () {
             var test = this,
@@ -51,7 +51,7 @@ YUI.add('task-tests', function(Y) {
                 } 
             });
 
-            test.wait(1000);
+            test.wait();
         },
         'multiple sequential yields': function () {
             var test = this;
@@ -65,7 +65,7 @@ YUI.add('task-tests', function(Y) {
                 });
             });
 
-            test.wait(1000);
+            test.wait();
         },
         'returned promise resolution': function () {
             var test = this;
@@ -79,7 +79,7 @@ YUI.add('task-tests', function(Y) {
                 });
             });
 
-            test.wait(1000);
+            test.wait();
         },
         'errors thrown inside the generator function reject the returned promise': function () {
             var test = this,
@@ -93,7 +93,7 @@ YUI.add('task-tests', function(Y) {
                 });
             });
 
-            test.wait(1000);
+            test.wait();
         },
         'errors thrown inside the generator function after yielding reject the returned promise': function () {
             var test = this,
@@ -108,7 +108,7 @@ YUI.add('task-tests', function(Y) {
                 });
             });
 
-            test.wait(1000);
+            test.wait();
         }
     }));
 
