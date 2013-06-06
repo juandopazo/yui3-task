@@ -7,15 +7,16 @@
         "url": "https://github.com/juandopazo/yui3-task/issues"
     },
     "engines": {
-        "node": ">=0.10.0"
+        "node": ">=0.11.2"
     },
     "dependencies": {},
     "devDependencies": {
         "shifter": "0.3.3",
-        "grover": "0.1.14"
+        "yui": "3.10.2",
+        "yuitest": "0.7.9"
     },
     "scripts": {
-        "test": "shifter --build-dir ./build && grover --server tests/unit/*.html"
+        "test": "shifter --build-dir ./build && node --harmony-generators node_modules/yuitest/cli.js tests/cli/run.js"
     },
     "repository": {
         "type": "git",
